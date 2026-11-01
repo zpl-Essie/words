@@ -1,7 +1,7 @@
 // 拍拍学 · Service Worker
 // 缓存策略：Stale-While-Revalidate（先返回缓存，后台更新）
 
-const CACHE = 'words-v20261101DEMO';
+const CACHE = 'words-v20261101ICON';
 const ASSETS = [
   './',
   'index.html',
@@ -13,6 +13,10 @@ const ASSETS = [
   'data/dict.json',
   'manifest.webmanifest',
   'icon.svg',
+  'icons/icon-192.png',
+  'icons/icon-512.png',
+  'icons/icon-maskable-512.png',
+  'icons/apple-touch-icon.png',
 ];
 
 self.addEventListener('install', (e) => {
