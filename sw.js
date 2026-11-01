@@ -1,7 +1,7 @@
 // 拍拍学 · Service Worker
 // 缓存策略：Stale-While-Revalidate（先返回缓存，后台更新）
 
-const CACHE = 'words-v20261101ICON';
+const CACHE = 'words-v20261101ICON2';
 const ASSETS = [
   './',
   'index.html',
