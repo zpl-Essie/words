@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content" />
+  <meta name="theme-color" content="#F1EDE4" />
+  <!-- CSP：只允许本站脚本、指定域的接口和音频。
+       注意 connect-src 里的云函数域名必须和 js/app.js 的 ARK_PROXY_BASE 保持一致，
+       换云函数后两处都要改，否则识别/发音会被浏览器拦掉。 -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: https://dict.youdao.com; connect-src 'self' https://1490422137-0nn0l59cii.ap-shanghai.tencentscf.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="拍拍学" />
+  <title>拍拍学</title>
+  <link rel="stylesheet" href="css/style.css?v=20261101DEMO" />
+</head>
+<body>
+  <!-- 首页：拍照入口 -->
+  <section id="page-home" class="page page--active">
+    <header class="topbar">
+      <div class="logo">📷 拍拍学</div>
+    </header>
+
+    <main class="home">
+      <h1 class="home__title">看见什么，学什么</h1>
+      <p class="home__sub">拍一张照片，圈出想认识的物品，学它的英文</p>
+
+      <button class="camera-btn" id="btn-camera" aria-label="拍一张">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M3 7h4l2-2h6l2 2h4v12H3z" stroke-linejoin="round" />
+          <circle cx="12" cy="13" r="4" />
+        </svg>
+        <span>拍一张</span>
+      </button>
+
+      <button class="album-btn" id="btn-album">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6">
+          <rect x="3" y="5" width="18" height="14" rx="2" />
+          <circle cx="9" cy="11" r="1.6" />
+          <path d="M21 16l-5-5-9 8" stroke-linejoin="round" />
+        </svg>
+        从相册选择
+      </button>
+
+      <button class="demo-entry" id="btn-demo">
+        <span class="demo-entry__badge">DEMO</span>
+        <span class="demo-entry__main">
+          <span class="demo-entry__title">免 key 体验</span>
+          <span class="demo-entry__sub">两张示例照片，直接看完整流程</span>
+        </span>
+        <span class="demo-entry__arrow">→</span>
+      </button>
+
+      <p class="home__tip">光线充足、物品清晰，识别更准</p>
+    </main>
+
+    <input type="file" id="file-camera" accept="image/*" capture="environment" hidden />
+    <input type="file" id="file-album" accept="image/*" hidden />
+  </section>
+
+  <!-- 结果页：圈画 + 单词表 -->
+  <section id="page-result" class="page">
+    <header class="topbar">
+      <button class="topbar__icon" id="btn-back" aria-label="返回">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <div class="topbar__title">看图学词 <span id="photo-counter" class="topbar__counter"></span><span id="demo-badge" class="demo-badge" hidden>演示</span></div>
+      <button class="topbar__icon" id="btn-add-photo" aria-label="继续拍" title="继续拍">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M3 7h4l2-2h6l2 2h4v12H3z" stroke-linejoin="round" />
+          <circle cx="12" cy="13" r="4" />
+          <path d="M12 9v8M8 13h8" stroke-linecap="round" />
+        </svg>
+      </button>
+    </header>
+
+    <main class="result">
+      <div class="photo-wrap" id="photo-wrap">
+        <img id="photo-img" alt="待识别照片" />
+        <canvas id="circle-canvas" class="circle-canvas"></canvas>
+      </div>
+
+      <div class="status" id="status"></div>
+
+      <div class="wordlist" id="wordlist">
+        <div class="wordlist__head">
+          <span class="wordlist__title">已加入 <strong id="item-count">0</strong> 个</span>
+        </div>
+        <ul id="wordlist-ul"></ul>
+      </div>
+
+      <button class="circle-entry" id="btn-circle">
+        <span class="circle-entry__icon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 2">
+            <circle cx="12" cy="12" r="8" />
+            <text x="12" y="15.5" text-anchor="middle" font-size="9" stroke="none" fill="currentColor">?</text>
+          </svg>
+        </span>
+        再圈一个词
+      </button>
+    </main>
+
+    <footer class="actionbar">
+      <button class="btn-primary" id="btn-generate" disabled>生成英文对话</button>
+      <p class="actionbar__hint" id="actionbar-hint">圈出物品并输入中文，就会加入上面的单词表</p>
+    </footer>
+
+    <div class="circle-mask" id="circle-mask" hidden>
+      <div class="circle-mask__top" id="circle-mask-top">
+        <span class="circle-mask__tip" id="circle-mask-tip">拖框圈住物品：输中文得英文，留空直接识图</span>
+        <button class="circle-mask__done" id="btn-circle-done">完成</button>
+      </div>
+      <div class="circle-mask__bar" id="circle-mask-bar">
+        <button class="circle-mask__undo" id="btn-circle-undo" aria-label="撤销上一个圈">↶</button>
+        <input
+          type="text"
+          id="input-zh"
+          class="circle-mask__input"
+          placeholder="输入中文，或留空识图"
+          autocomplete="off"
+          enterkeyhint="done"
+        />
+        <button class="circle-mask__add" id="btn-add-zh">加入</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 对话卡片 modal -->
+  <div class="dialog-modal" id="dialog-modal" hidden>
+    <div class="dialog-modal__backdrop"></div>
+    <div class="dialog-modal__card">
+      <header class="dialog-modal__head">
+        <span class="dialog-modal__title">🎧 对话练习</span>
+        <button class="dialog-modal__close" id="dialog-modal-close" aria-label="关闭">×</button>
+      </header>
+      <p class="dialog-modal__scene" id="dialog-modal-scene"></p>
+      <div class="dialog-modal__body" id="dialog-modal-body"></div>
+      <footer class="dialog-modal__foot">
+        <button class="btn-primary" id="dialog-modal-save">保存</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- 生词本：历史对话 -->
+  <section id="page-vocab" class="page">
+    <header class="topbar">
+      <div class="topbar__title">生词本</div>
+      <div style="width:36px"></div>
+    </header>
+    <main class="vocab">
+      <p class="vocab__empty" id="vocab-empty" hidden>还没有保存的对话<br>圈出物品生成对话后点「保存」就能留下来</p>
+      <ul class="vocab__list" id="vocab-list"></ul>
+    </main>
+  </section>
+
+  <!-- 设置页（API key） -->
+  <section id="page-settings" class="page">
+    <header class="topbar">
+      <button class="topbar__icon" id="btn-settings-back" aria-label="返回">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <div class="topbar__title">设置</div>
+      <div style="width:36px"></div>
+    </header>
+
+    <main class="settings">
+      <div class="settings__card">
+        <h3 class="settings__title">豆包 API Key</h3>
+        <p class="settings__desc" id="input-key-hint">
+          首次使用需填入你的豆包 API key。key 只保存在你自己浏览器；调用时经云函数原样转发给豆包，
+          服务端不存储、不记录。
+        </p>
+        <input
+          type="password"
+          id="input-api-key"
+          class="settings__input"
+          placeholder="ark-xxxxxxxx"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <p class="settings__status" id="key-status">未配置</p>
+        <p class="settings__help">
+          没有 key？去 <a href="https://www.volcengine.com/product/ark" target="_blank" rel="noopener">火山引擎</a> 注册 → 创建 API Key。新用户有免费额度。
+        </p>
+        <p class="settings__help">
+          建议为本站单独创建一把 key：浏览器本地存储不加密，专用 key 不用时可随时在控制台撤销，不影响你其他应用。
+        </p>
+        <p class="settings__help">
+          没有 key 也能先回首页点「免 key 体验」，用预置照片看完整流程。
+        </p>
+      </div>
+
+      <div class="settings__actions">
+        <button class="btn-primary" id="btn-settings-save">保存</button>
+        <button class="btn-ghost" id="btn-settings-test">测试连接</button>
+        <button class="btn-ghost" id="btn-settings-clear">清除 key</button>
+      </div>
+      <p class="settings__status" id="test-status"></p>
+
+      <details class="settings__advanced">
+        <summary class="settings__advanced-summary">
+          <span>高级：识别模型</span>
+          <span class="settings__advanced-hint">已自动配好，一般不用动</span>
+        </summary>
+        <p class="settings__desc" id="model-hint">
+          留空则用内置默认模型。模型 ID 必须是账号里已开通的，否则豆包会返回 404；
+          点下面的按钮可列出账号里可用的模型并自动填好。
+        </p>
+        <label class="settings__label" for="input-vision-model">视觉模型（看图）</label>
+        <input
+          type="text"
+          id="input-vision-model"
+          class="settings__input"
+          list="model-options"
+          placeholder="doubao-…"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <label class="settings__label" for="input-text-model">文本模型（查词）</label>
+        <input
+          type="text"
+          id="input-text-model"
+          class="settings__input"
+          list="model-options"
+          placeholder="doubao-…"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <datalist id="model-options"></datalist>
+        <button class="btn-ghost" id="btn-fetch-models">拉取可用模型（自动填好）</button>
+        <p class="settings__status" id="model-status">未拉取</p>
+        <p class="settings__help">
+          也可去 <a href="https://console.volcengine.com/ark" target="_blank" rel="noopener">方舟控制台 → 开通管理</a>
+          复制已开通的模型名粘贴到上面两栏。
+        </p>
+      </details>
+
+      <div class="settings__about">
+        <p>拍拍学 V1.0 · 看见什么，学什么</p>
+        <p class="settings__build" id="build-tag"></p>
+      </div>
+    </main>
+  </section>
+
+  <!-- 加载层 -->
+  <div class="loading" id="loading" hidden>
+    <div class="loading__spinner"></div>
+    <p id="loading-text">正在看图中…</p>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" hidden></div>
+
+  <!-- 全局底部 Tab 导航（所有页面共享） -->
+  <nav class="tabbar">
+    <button class="tab tab--active" id="tab-home">拍照</button>
+    <button class="tab" id="tab-vocab">生词本</button>
+    <button class="tab" id="tab-settings">我的</button>
+  </nav>
+
+  <script src="js/demo-data.js?v=20261101DEMO"></script>
+  <script src="js/app.js?v=20261101DEMO"></script>
+</body>
+</html>

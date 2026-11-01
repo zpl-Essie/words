@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 编辑部纸张感：荧光黄绿底 + 墨黑线，去掉渐变 -->
+  <rect width="512" height="512" rx="72" fill="#E3F04B"/>
+  <rect x="4" y="4" width="504" height="504" rx="68" fill="none" stroke="#141414" stroke-width="8" opacity="0.28"/>
+  <!-- 相机取景框 -->
+  <rect x="120" y="160" width="272" height="200" rx="20" fill="none" stroke="#141414" stroke-width="16" stroke-linejoin="round"/>
+  <!-- 镜头圆 -->
+  <circle cx="256" cy="260" r="56" fill="none" stroke="#141414" stroke-width="16"/>
+  <!-- 顶上的小圆点（闪光灯） -->
+  <circle cx="370" cy="195" r="10" fill="#141414"/>
+  <!-- "学"字简化示意：纸白小点 -->
+  <circle cx="180" cy="380" r="7" fill="#141414" opacity="0.9"/>
+  <circle cx="202" cy="396" r="5" fill="#141414" opacity="0.6"/>
+  <circle cx="158" cy="396" r="4" fill="#141414" opacity="0.4"/>
+</svg>

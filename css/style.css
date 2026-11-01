@@ -1,0 +1,1208 @@
+/* ============================================
+   拍拍学 · 全局样式
+   视觉方向：编辑部纸张感（参考 OTIUM 编辑部）
+   纸白 + 墨黑 + 荧光黄绿 + 淡紫 + 朱红
+   规则：不做渐变、不做毛玻璃；荧光黄绿只做小面积焦点
+   ============================================ */
+
+:root {
+  /* ---- 纸与墨 ---- */
+  --paper:   #F1EDE4;   /* 页面底色：奶油纸 */
+  --paper-2: #FAF8F3;   /* 卡片底：比底色亮一档，读作"纸上的纸" */
+  --paper-3: #E5E5E2;   /* 冷灰：次级底 / 照片占位 */
+
+  --ink:     #141414;   /* 墨黑：主文字 */
+  --ink-2:   #55534E;   /* 次级文字 */
+  --ink-3:   #8C8880;   /* 弱文字 / 元信息 */
+  --ink-4:   #B5B1A9;   /* 最弱的图标 / 占位 */
+
+  --line:      rgba(20, 20, 20, 0.14);  /* 发丝分隔线 */
+  --line-soft: rgba(20, 20, 20, 0.07);
+
+  /* ---- 强调色 ---- */
+  --volt:     #E3F04B;  /* 荧光黄绿：焦点（对比度低，只做小面积） */
+  --volt-ink: #141414;  /* 荧光底上的文字一律用墨黑，绝不用白 */
+  --lilac:    #D9D1EF;  /* 淡紫：次级强调 */
+  --vermilion:#A33A2E;  /* 朱红：删除 / 纠错 */
+
+  /* ---- 字体 ---- */
+  --serif: Georgia, "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC", "SimSun", "宋体", serif;
+  --sans:  -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  --mono:  ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  /* ---- 纸的投影（中性，不用彩色光晕）---- */
+  --shadow-card: 0 1px 2px rgba(20, 20, 20, 0.05), 0 8px 24px rgba(20, 20, 20, 0.07);
+  --shadow-lift: 0 10px 30px rgba(20, 20, 20, 0.12);
+
+  /* ---- 圆角：向"纸"收，不用大药丸 ---- */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* hidden 属性优先级兜底：.loading/.toast/.circle-mask 等
+   用 display:flex 定义了显示态，会覆盖 hidden 的 UA 默认 display:none，
+   导致打开页面就看到加载层。必须显式声明 hidden 永远隐藏。 */
+[hidden] {
+  display: none !important;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* ---------- 页面切换 ---------- */
+.page {
+  display: none;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+  padding-bottom: 60px; /* 给固定 tabbar 留出空间 */
+}
+.page--active {
+  display: flex;
+}
+
+/* ---------- 顶部条 ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.topbar__title {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.topbar__counter {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-3);
+  margin-left: 6px;
+  letter-spacing: 0.02em;
+}
+.topbar__icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+.topbar__icon:active {
+  background: rgba(20, 20, 20, 0.06);
+}
+.logo {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------- 首页 ---------- */
+.home {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+}
+.home__title {
+  font-family: var(--serif);
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  margin: 0 0 14px;
+}
+.home__sub {
+  color: var(--ink-3);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  margin: 0 0 48px;
+}
+.camera-btn {
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  background: var(--volt);
+  color: var(--volt-ink);
+  border: 1.5px solid var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  box-shadow: var(--shadow-lift);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.camera-btn:active {
+  transform: scale(0.96);
+  box-shadow: var(--shadow-card);
+}
+.album-btn {
+  margin-top: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  padding: 10px 18px;
+  border-radius: var(--r-md);
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+}
+.album-btn:active {
+  background: var(--paper-3);
+}
+.home__tip {
+  margin-top: 32px;
+  color: var(--ink-3);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+/* ---------- 免 key 演示入口 ---------- */
+.demo-entry {
+  margin-top: 36px;
+  width: min(340px, 100%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  text-align: left;
+  background: var(--lilac);
+  border: 1px solid var(--ink);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.demo-entry:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+.demo-entry__badge {
+  flex: 0 0 auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  background: var(--ink);
+  color: var(--paper-2);
+  padding: 4px 6px;
+  border-radius: 3px;
+}
+.demo-entry__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.demo-entry__title {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.demo-entry__sub {
+  font-size: 11px;
+  color: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+.demo-entry__arrow {
+  font-family: var(--mono);
+  font-size: 16px;
+}
+
+/* 结果页顶栏的演示徽标 */
+.demo-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--lilac);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  vertical-align: 2px;
+}
+
+/* 矮屏（iPhone SE 等）：首页多了演示入口，收紧间距避免内容被裁掉 */
+@media (max-height: 680px) {
+  .home { padding: 24px; }
+  .home__sub { margin-bottom: 32px; }
+  .camera-btn { width: 148px; height: 148px; font-size: 18px; }
+  .album-btn { margin-top: 20px; }
+  .demo-entry { margin-top: 24px; }
+  .home__tip { margin-top: 20px; }
+}
+
+/* ---------- 底部 Tab ---------- */
+.tabbar {
+  display: flex;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+  padding: 8px 0 env(safe-area-inset-bottom, 12px);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+.tab {
+  flex: 1;
+  padding: 10px 0;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  position: relative;
+}
+.tab--active {
+  color: var(--ink);
+  font-weight: 500;
+}
+.tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  background: var(--volt);
+  border: 1px solid rgba(20, 20, 20, 0.25);
+}
+
+/* ---------- 结果页 ---------- */
+.result {
+  flex: 1;
+  padding: 16px;
+  /* 底部 actionbar(~76px) + tabbar(~50px) + 安全区 */
+  padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px));
+}
+.photo-wrap {
+  position: relative;
+  width: 100%;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--paper-3);
+  border: 1px solid var(--line);
+  /* touch-action 不在父级上设，避免和 canvas 的 touch-action: none 冲突；
+     JS 里 preventDefault() 阻止浏览器默认横向滚，只让纵向滚生效 */
+  margin-bottom: 16px;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 圈画模式下键盘弹出时照片用 transform: scale() 缩放，这里让它平滑过渡 */
+  transition: transform 0.28s ease;
+}
+.photo-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.circle-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2; /* 明确压在照片之上，退出圈画模式后已画的圈也不会被盖掉 */
+  pointer-events: none;
+  touch-action: none;
+}
+.circle-canvas--active {
+  pointer-events: auto;
+  cursor: crosshair;
+}
+
+.status {
+  text-align: center;
+  color: var(--ink-3);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  margin: 8px 0 12px;
+  min-height: 18px;
+}
+
+/* ---------- 单词列表 ---------- */
+.wordlist {
+  background: var(--paper-2);
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.wordlist__head {
+  padding: 10px 14px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--line-soft);
+}
+.wordlist__head strong {
+  font-family: var(--serif);
+  color: var(--ink);
+  font-weight: 500;
+  font-size: 14px;
+}
+.wordlist ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.word-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.word-row:last-child {
+  border-bottom: none;
+}
+.word-row__main {
+  flex: 1;
+  min-width: 0;
+}
+.word-row__en {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+.word-row__meta {
+  font-size: 12px;
+  color: var(--ink-3);
+  letter-spacing: 0.03em;
+  margin-top: 2px;
+}
+.word-row__speak {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+.word-row__speak:active {
+  background: var(--volt);
+}
+.word-row__remove {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--ink-4);
+}
+.word-row__remove:active {
+  color: var(--vermilion);
+  background: rgba(163, 58, 46, 0.08);
+}
+.word-row--empty {
+  padding: 24px 14px;
+  text-align: center;
+  color: var(--ink-3);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- 圈画入口 ---------- */
+.circle-entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--r-md);
+  border: 1.5px dashed var(--ink-3);
+  color: var(--ink);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  background: transparent;
+  margin: 0 auto;
+  display: flex;
+  width: fit-content;
+}
+.circle-entry:active {
+  background: var(--volt);
+  border-color: var(--ink);
+}
+
+/* ---------- 底部主操作 ---------- */
+.actionbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  /* 底部 tabbar 高约 50px，actionbar 要浮在它上方避免被挡住 */
+  bottom: calc(50px + env(safe-area-inset-bottom, 0px));
+  background: var(--paper);
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  z-index: 20;
+}
+.btn-primary {
+  width: 100%;
+  height: 50px;
+  border-radius: var(--r-md);
+  background: var(--volt);
+  color: var(--volt-ink);
+  border: 1.5px solid var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.btn-primary:disabled {
+  opacity: 0.45;
+  border-color: var(--line);
+}
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.actionbar__hint {
+  margin: 8px 0 0;
+  color: var(--ink-3);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- 圈画蒙层 ----------
+   蒙层本身透明（照片不被压暗），只有顶条和底部输入条是不透明纸条；
+   照片由 JS 精确缩放到两条之间的可用区域（见 fitCircleLayout）。 */
+.circle-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 101; /* 必须高于 .tabbar 的 100，否则输入条被底部导航挡住 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none; /* 让指针事件穿透到下面的圈画 canvas，否则整屏蒙层会吃掉所有手势 */
+}
+.circle-mask__top {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  /* 浏览器模式下系统状态栏独立占位，不再预留 env(safe-area-inset-top)，
+     否则 vivo 等内核会多报一个安全区高度，顶部空一截；
+     全屏 PWA 模式（standalone）网页会延伸到状态栏下面，才需要避让（见文末覆盖）。 */
+  padding: 10px 12px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  pointer-events: auto; /* 不透明纸条要挡住手势，免得在顶条上画出圈 */
+}
+.circle-mask__tip {
+  flex: 1;
+  color: var(--ink-2);
+  font-family: var(--serif);
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+.circle-mask__done {
+  flex: none;
+  height: 36px;
+  padding: 0 18px;
+  border-radius: var(--r-md);
+  background: var(--volt);
+  border: 1.5px solid var(--ink);
+  color: var(--volt-ink);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+/* 输入条：始终 position:fixed（脱离文档流）。
+   平时贴底；键盘弹出时 body.circle-keyboard 把它沿 bottom 平滑滑到顶部——
+   输入框在键盘弹出前就已位于屏幕顶部，浏览器无需再「推页面露出输入框」，
+   从根上消除整屏上移、跳过头的问题。 */
+.circle-mask__bar {
+  pointer-events: auto;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  /* 顶部不再预留 env(safe-area-inset-top)：浏览器里系统状态栏已独立占位，
+     再让一次会多出一截空白；只保留底部安全区（贴底时避开手势条）。
+     上下内边距在「贴底 ↔ 贴顶」两态一致，bar 高度不变、滑动不跳。 */
+  padding: 10px 12px calc(env(safe-area-inset-bottom, 0px) + 10px);
+  transition: bottom 0.22s ease, border-color 0.22s ease;
+  z-index: 101;
+}
+/* 键盘态：输入条贴到屏幕顶部（--circle-bar-h 由 JS 实测填入） */
+body.circle-keyboard .circle-mask__bar {
+  bottom: calc(100% - var(--circle-bar-h, 60px));
+  border-top-color: transparent;
+  border-bottom: 1px solid var(--line);
+}
+body.circle-keyboard .circle-mask__top {
+  display: none;
+}
+/* 全屏 PWA（添加到主屏幕）下，网页内容延伸到系统状态栏/手势条后面，
+   顶部需要避让安全区；普通浏览器模式（display-mode: browser）不需要。 */
+@media (display-mode: standalone) {
+  .circle-mask__top {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 10px);
+  }
+  body.circle-keyboard .circle-mask__bar {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 10px);
+  }
+}
+.circle-mask__undo {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-md);
+  background: var(--paper-3);
+  color: var(--ink);
+  font-size: 16px;
+}
+.circle-mask__input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--paper);
+  padding: 0 12px;
+  font-size: 16px; /* 小于 16px 时 iOS 聚焦会自动放大页面 */
+  color: var(--ink);
+  outline: none;
+}
+.circle-mask__input:focus {
+  border-color: var(--ink);
+}
+.circle-mask__add {
+  flex: none;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: var(--r-md);
+  background: var(--volt);
+  border: 1.5px solid var(--ink);
+  color: var(--volt-ink);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- 圈画模式：锁定全屏，只留 顶条 / 照片 / 输入条 ----------
+   进圈画模式时 JS 给 body 加 .circle-mode：藏掉顶栏、状态行、单词表、
+   「再圈一个词」和底部黄色按钮，页面不再滚动，照片独占屏幕中段。 */
+body.circle-mode {
+  overflow: hidden;
+}
+body.circle-mode .topbar,
+body.circle-mode .status,
+body.circle-mode .wordlist,
+body.circle-mode .circle-entry,
+body.circle-mode .actionbar,
+body.circle-mode .tabbar {
+  display: none;
+}
+body.circle-mode .result {
+  padding: 0 12px;
+}
+/* 圈画模式下照片 fixed 定位：和输入条同机制跟随可视区域。
+   键盘弹出时照片 top 改到「已上移的输入条」下方，能拿到可视高度的浏览器
+   会额外等比缩小照片；拿不到键盘高度的浏览器（部分国产定制内核）照片保持
+   原尺寸，下半部分被键盘盖住——但顶部和所圈区域不会再被推出屏幕。 */
+body.circle-mode .photo-wrap {
+  position: fixed;
+  left: 50%;
+  margin: 0;
+  z-index: 5;
+  transition: transform 0.22s ease, top 0.22s ease;
+}
+/* 旧的「按高度媒体查询藏顶条」已废弃：不报告键盘高度的浏览器永远不会命中，
+   改由 body.circle-keyboard 类控制（见 .circle-mask__bar 键盘态）。 */
+
+/* ---------- 加载层 ---------- */
+.loading {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 20, 0.55);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 50;
+  color: #F1EDE4;
+}
+.loading__spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(241, 237, 228, 0.25);
+  border-top-color: var(--volt);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.loading p {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 16px;
+  border-radius: var(--r-md);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  z-index: 60;
+  pointer-events: none;
+  animation: fade 0.2s;
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ---------- 设置页 ---------- */
+.settings {
+  flex: 1;
+  padding: 16px;
+  padding-bottom: 32px;
+}
+.settings__card {
+  background: var(--paper-2);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  padding: 20px 16px;
+  margin-bottom: 16px;
+}
+.settings__title {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  margin: 0 0 8px;
+}
+.settings__desc {
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  margin: 0 0 16px;
+}
+.settings__input {
+  width: 100%;
+  height: 44px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--paper);
+  padding: 0 14px;
+  font-size: 15px;
+  color: var(--ink);
+  font-family: var(--mono);
+  outline: none;
+  transition: border-color 0.15s;
+  margin-bottom: 8px;
+}
+.settings__input:focus {
+  border-color: var(--ink);
+}
+.settings__status {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  margin: 0 0 12px;
+}
+.settings__help {
+  font-size: 12px;
+  color: var(--ink-3);
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+.settings__help a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.settings__help a:active {
+  background: var(--volt);
+}
+.settings__label {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  margin: 12px 0 6px;
+}
+.settings__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.btn-ghost {
+  width: 100%;
+  height: 44px;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--line);
+  transition: color 0.15s, background 0.15s;
+}
+.btn-ghost:active {
+  color: var(--vermilion);
+  background: rgba(163, 58, 46, 0.06);
+}
+
+/* ---------- 设置页 · 高级折叠区（识别模型，一般不用动） ---------- */
+.settings__advanced {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+.settings__advanced-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 0;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+}
+.settings__advanced-summary::-webkit-details-marker {
+  display: none;
+}
+.settings__advanced-summary::after {
+  content: '＋';
+  color: var(--ink-3);
+  font-size: 14px;
+}
+.settings__advanced-hint {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+.settings__advanced[open] .settings__advanced-summary {
+  border-bottom: 1px solid var(--line-soft);
+  margin-bottom: 14px;
+}
+.settings__advanced[open] .settings__advanced-summary::after {
+  content: '－';
+}
+.settings__advanced > :last-child {
+  margin-bottom: 16px;
+}
+.settings__about {
+  text-align: center;
+  color: var(--ink-3);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  margin-top: 32px;
+}
+/* 构建标记：比正文再淡一档，只做版本自证，不抢视线 */
+.settings__build {
+  margin: 6px 0 0;
+  color: var(--ink-4);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  font-family: var(--mono);
+}
+
+/* ---------- 对话面板 ---------- */
+#dialog-panel {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+.dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.dialog-title {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.dialog-close {
+  color: var(--ink-3);
+  font-size: 22px;
+  line-height: 1;
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+.dialog-close:active { background: var(--paper-3); }
+.dialog-scene {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--ink-2);
+  font-style: italic;
+  letter-spacing: 0.02em;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--line);
+}
+.dialog-turns {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.dialog-turn {
+  position: relative;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+}
+.dialog-turn--a { border-left: 3px solid var(--ink); }
+.dialog-turn--b { border-left: 3px solid var(--ink-3); }
+.dialog-turn__who {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.dialog-turn__en {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.dialog-turn__zh {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.dialog-turn__hl {
+  margin: 6px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dialog-hl {
+  background: var(--volt);
+  color: var(--volt-ink);
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.dialog-turn__speak {
+  position: absolute;
+  top: 8px; right: 8px;
+  font-size: 14px;
+  opacity: 0.5;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  transition: opacity 0.15s, background 0.15s;
+}
+.dialog-turn__speak:active { opacity: 1; background: var(--paper-3); }
+
+/* ---------- 对话卡片 Modal ---------- */
+.dialog-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+.dialog-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 20, 20, 0.45);
+  backdrop-filter: blur(2px);
+}
+.dialog-modal__card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  max-height: 88vh;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lift);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalIn 0.22s ease-out;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+.dialog-modal__head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-2);
+}
+.dialog-modal__title {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.dialog-modal__close {
+  color: var(--ink-3);
+  font-size: 24px;
+  line-height: 1;
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+.dialog-modal__close:active { background: var(--paper-3); }
+.dialog-modal__scene {
+  margin: 0;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--ink-2);
+  font-style: italic;
+  border-bottom: 1px dashed var(--line);
+  flex: 0 0 auto;
+}
+.dialog-modal__body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+/* A/B 气泡 */
+.dm-turn {
+  display: flex;
+  flex-direction: column;
+  max-width: 85%;
+}
+/* 演示模式：对话逐条浮现，模拟"正在打出来" */
+.dm-turn--demo-in {
+  opacity: 0;
+  animation: dmTurnIn 0.32s ease-out forwards;
+}
+@keyframes dmTurnIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.dm-turn--a { align-self: flex-start; }
+.dm-turn--b { align-self: flex-end; }
+.dm-turn__who {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+  margin-bottom: 3px;
+}
+.dm-turn--b .dm-turn__who { text-align: right; }
+.dm-bubble {
+  padding: 10px 12px;
+  border-radius: 14px;
+  line-height: 1.55;
+}
+.dm-turn--a .dm-bubble {
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+  border-top-left-radius: var(--r-sm);
+}
+.dm-turn--b .dm-bubble {
+  background: var(--ink);
+  color: var(--paper-2);
+  border-top-right-radius: var(--r-sm);
+}
+.dm-bubble__en {
+  margin: 0;
+  font-size: 15px;
+}
+.dm-turn--b .dm-bubble__en { color: var(--paper-2); }
+.dm-bubble__zh {
+  margin: 4px 0 0;
+  font-size: 12px;
+  opacity: 0.75;
+}
+.dm-turn__hl {
+  margin: 4px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.dm-turn--b .dm-hl {
+  background: var(--volt);
+  color: var(--volt-ink);
+}
+.dm-hl {
+  background: var(--volt);
+  color: var(--volt-ink);
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.dm-turn__speak {
+  align-self: flex-end;
+  margin-top: 4px;
+  font-size: 13px;
+  opacity: 0.45;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  transition: opacity 0.15s, background 0.15s;
+}
+.dm-turn__speak:active { opacity: 1; background: var(--paper-3); }
+.dm-turn--b .dm-turn__speak { opacity: 0.55; }
+.dm-turn--b .dm-turn__speak:active { opacity: 1; background: rgba(255,255,255,0.35); }
+/* 播放中：喇叭脉冲 */
+.dm-turn__speak.is-playing {
+  opacity: 1;
+  animation: tts-pulse 0.9s ease-in-out infinite;
+}
+@keyframes tts-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+.dialog-modal__foot {
+  flex: 0 0 auto;
+  padding: 10px 16px calc(env(safe-area-inset-bottom,0px)+12px);
+  border-top: 1px solid var(--line);
+  background: var(--paper-2);
+}
+.dialog-modal__foot .btn-primary { width: 100%; }
+
+/* ---------- 生词本（历史对话列表） ---------- */
+.vocab {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+.vocab__empty {
+  text-align: center;
+  margin-top: 80px;
+  color: var(--ink-3);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.vocab__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.vocab-item {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.vocab-item__main { flex: 1; min-width: 0; }
+.vocab-item__scene {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin: 0 0 4px;
+}
+.vocab-item__words {
+  font-size: 12px;
+  color: var(--ink-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 0 0 4px;
+}
+.vocab-item__date {
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+.vocab-item__open {
+  font-size: 20px;
+  color: var(--ink-3);
+  padding: 4px 6px;
+}
